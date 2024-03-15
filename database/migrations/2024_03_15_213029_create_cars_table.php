@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('body_type');
             $table->string('mileage_in_km');
             $table->string('technical_inspection_date');
-            $table->integer('price_in_cents');
+            $table->integer('price');
             $table->dateTime('upload_date');
             $table->json('specifications')->nullable();
             $table->timestamps();

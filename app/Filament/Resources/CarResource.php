@@ -3,14 +3,13 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\CarResource\Pages;
-use App\Filament\Resources\CarResource\RelationManagers;
 use App\Models\Car;
 use Filament\Actions\ViewAction;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\QueryBuilder;
 use Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint;
 use Filament\Tables\Filters\QueryBuilder\Constraints\SelectConstraint;
@@ -42,7 +41,7 @@ class CarResource extends Resource
                         Forms\Components\TextInput::make('body_type'),
                         Forms\Components\TextInput::make('mileage_in_km'),
                         Forms\Components\TextInput::make('technical_inspection_date'),
-                        Forms\Components\TextInput::make('price_in_cents')
+                        Forms\Components\TextInput::make('price')
                             ->label('Price')
                             ->suffix('€')
                             ->columnSpanFull(),
@@ -78,13 +77,16 @@ class CarResource extends Resource
                 Tables\Columns\TextColumn::make('mileage_in_km'),
                 Tables\Columns\TextColumn::make('technical_inspection_date')
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('price_in_cents')->label('Price'),
+                Tables\Columns\TextColumn::make('price')->label('Price'),
                 Tables\Columns\TextColumn::make('upload_date')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 QueryBuilder::make()
                     ->constraints([
+                        NumberConstraint::make('price')
+                            ->label('Price')
+                            ->icon('heroicon-o-currency-euro'),
                         SelectConstraint::make('mark')
                             ->multiple()
                             ->options(

@@ -65,10 +65,9 @@ class CarSpider extends BasicSpider
 
         $technicalInspectionDate = $response->filter("td#tdo_223")->text();
 
-        $priceInCents = $response->filter("span.ads_price")->text();
+        $price = $response->filter("span.ads_price")->text();
 
-        $priceInCents = Str::of($priceInCents)->remove('€')->remove(' ')->toInteger();
-        $priceInCents = $priceInCents * 100;
+        $price = Str::of($price)->remove('€')->remove(' ')->toInteger();
 
         try {
             $specifications = $response->filter("div#msg_div_msg")->html();
@@ -92,7 +91,7 @@ class CarSpider extends BasicSpider
             'body_type' => $bodyType,
             'mileage_in_km' => $mileageInKm,
             'technical_inspection_date' => $technicalInspectionDate,
-            'price_in_cents' => $priceInCents,
+            'price' => $price,
             'upload_date' => Carbon::make($uploadDate)->toDateTimeString(),
             'specifications' => json_encode($specifications),
         ]);
