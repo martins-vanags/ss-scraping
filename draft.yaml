@@ -11,7 +11,7 @@ models:
     body_type: string
     mileage_in_km: string
     technical_inspection_date: string
-    prince_in_cents: integer
+    price_in_cents: integer
     upload_date: datetime
     specifications: json nullable
 

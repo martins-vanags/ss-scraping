@@ -3,6 +3,7 @@
 namespace App\Spiders;
 
 use App\Models\Car;
+use Carbon\Carbon;
 use Generator;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
@@ -76,7 +77,7 @@ class CarSpider extends BasicSpider
         }
 
         preg_match_all('/<b class="auto_c">(.*?)<\/b>/s', $specifications, $matches);
-        [$htmlMatches, $filteredMatches] = $matches;
+        [, $filteredMatches] = $matches;
         $specifications = $filteredMatches;
 
         Car::create([
@@ -91,9 +92,9 @@ class CarSpider extends BasicSpider
             'body_type' => $bodyType,
             'mileage_in_km' => $mileageInKm,
             'technical_inspection_date' => $technicalInspectionDate,
-            'prince_in_cents' => $priceInCents,
-            'upload_date' => $uploadDate,
-            'specifications' => $specifications,
+            'price_in_cents' => $priceInCents,
+            'upload_date' => Carbon::make($uploadDate)->toDateTimeString(),
+            'specifications' => json_encode($specifications),
         ]);
 
         yield $this->item([]);
