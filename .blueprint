@@ -1,0 +1,7 @@
+created:
+    - database/factories/CarFactory.php
+    - database/migrations/2024_03_15_192551_create_cars_table.php
+    - app/Models/Car.php
+models:
+    User: { name: string, email: string, email_verified_at: 'timestamp nullable', password: string, remember_token: 'string:100 nullable' }
+    Car: { reference_url: string, unique_views: integer, description: longtext, mark: string, model: string, year: integer, motor: string, fuel_type: string, gearbox: string, color: string, body_type: string, mileage_in_km: integer, technical_inspection_date: 'date nullable', prince_in_cents: integer, upload_date: datetime, specifications: 'json nullable' }

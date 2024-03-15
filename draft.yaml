@@ -1,0 +1,24 @@
+models:
+  Car:
+    reference_url: string
+    unique_views: integer
+    description: longtext
+    mark: string
+    model: string
+    year: integer
+    motor: string
+    fuel_type: string
+    gearbox: string
+    color: string
+    body_type: string
+    mileage_in_km: integer
+    technical_inspection_date: date nullable
+    prince_in_cents: integer
+    upload_date: datetime
+    specifications: json nullable
+
+
+
+
+
+
