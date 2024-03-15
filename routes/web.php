@@ -6,6 +6,4 @@ use RoachPHP\Roach;
 
 Route::get('/dd', function () {
     Roach::startSpider(CarSpider::class);
-
-
 });

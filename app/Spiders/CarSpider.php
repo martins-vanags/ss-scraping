@@ -5,6 +5,7 @@ namespace App\Spiders;
 use App\Models\Car;
 use Generator;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 use RoachPHP\Http\Request;
 use RoachPHP\Http\Response;
 use RoachPHP\Spider\BasicSpider;
@@ -13,32 +14,87 @@ class CarSpider extends BasicSpider
 {
     public function parse(Response $response): Generator
     {
-        dump($response->getUri());
+        $uploadDate = $response->filter("#page_main table tr:contains('Izdrukāt') td[align]")->text();
+        $uploadDate = Str::of($uploadDate)->after('Datums: ')->toString();
 
-        $uniqueViews = $response->filter("span#show_cnt_stat")->innerText();
+        $request = Str::of($response->getUri())->explode('/')->toArray();
+        $mark = $request[7];
+        $model = $request[8];
 
-        dd($uniqueViews);
+        $year = $response->filter("td#tdo_18")->text();
+
+        try {
+            $motorSpecifications = $response->filter("td#tdo_15")->text();
+            [$motor, $fuelType] = Str::of($motorSpecifications)->explode(' ')->toArray();
+        } catch (InvalidArgumentException $e) {
+            $motor = 'Elektrisks';
+            $fuelType = 'Elektrisks';
+        }
 
 
-//        Car::create([
-//            'reference_url' => $response->getUri(),
-//            'unique_views' => '',
-//            'description' => '',
-//            'mark' => '',
-//            'model' => '',
-//            'year' => '',
-//            'motor' => '',
-//            'fuel_type' => '',
-//            'gearbox' => '',
-//            'color' => '',
-//            'body_type' => '',
-//            'mileage_in_km' => '',
-//            'technical_inspection_date' => '',
-//            'prince_in_cents' => '',
-//            'upload_date' => '',
-//            'specifications' => '',
-//        ]);
+        $gearBox = $response->filter("td#tdo_35")->text();
 
+        try {
+            $color = $response->filter("td#tdo_17")->text();
+            $color = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x{A0}]/u', '', $color);
+        } catch (InvalidArgumentException $e) {
+            $color = null;
+        }
+
+        if (is_null($color)) {
+            try {
+                $color = $response->filter('td#tdo_88')->text();
+                $color = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x{A0}]/u', '', $color);
+            } catch (InvalidArgumentException $e) {
+                $color = null;
+            }
+        }
+
+        if (is_null($color)) {
+            $color = 'Nav norādīts';
+        }
+
+        $bodyType = $response->filter("td#tdo_32")->text();
+
+        try {
+            $mileageInKm = $response->filter("td#tdo_16")->text();
+        } catch (InvalidArgumentException $e) {
+            $mileageInKm = 'Nav norādīts';
+        }
+
+        $technicalInspectionDate = $response->filter("td#tdo_223")->text();
+
+        $priceInCents = $response->filter("span.ads_price")->text();
+
+        $priceInCents = Str::of($priceInCents)->remove('€')->remove(' ')->toInteger();
+        $priceInCents = $priceInCents * 100;
+
+        try {
+            $specifications = $response->filter("div#msg_div_msg")->html();
+        } catch (InvalidArgumentException $e) {
+            $specifications = null;
+        }
+
+        preg_match_all('/<b class="auto_c">(.*?)<\/b>/s', $specifications, $matches);
+        [$htmlMatches, $filteredMatches] = $matches;
+        $specifications = $filteredMatches;
+
+        Car::create([
+            'reference_url' => $response->getUri(),
+            'mark' => $mark,
+            'model' => $model,
+            'year' => $year,
+            'motor' => $motor,
+            'fuel_type' => $fuelType,
+            'gearbox' => $gearBox,
+            'color' => $color,
+            'body_type' => $bodyType,
+            'mileage_in_km' => $mileageInKm,
+            'technical_inspection_date' => $technicalInspectionDate,
+            'prince_in_cents' => $priceInCents,
+            'upload_date' => $uploadDate,
+            'specifications' => $specifications,
+        ]);
 
         yield $this->item([]);
     }
