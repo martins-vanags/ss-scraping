@@ -4,20 +4,21 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\CarResource\Pages;
 use App\Models\Car;
-use Filament\Actions\ViewAction;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Group;
+use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\QueryBuilder;
 use Filament\Tables\Filters\QueryBuilder\Constraints\DateConstraint;
 use Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint;
 use Filament\Tables\Filters\QueryBuilder\Constraints\SelectConstraint;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class CarResource extends Resource
 {
@@ -52,7 +53,6 @@ class CarResource extends Resource
                 Forms\Components\Section::make('Car link details')
                     ->columns(1)
                     ->schema([
-                        Forms\Components\TextInput::make('upload_date'),
                         Forms\Components\TextInput::make('reference_url')
                             ->label('Reference URL')
                             ->url()
@@ -64,7 +64,11 @@ class CarResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultSort('id', 'desc')
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('ID')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('mark'),
                 Tables\Columns\TextColumn::make('model'),
                 Tables\Columns\TextColumn::make('year'),
@@ -78,8 +82,11 @@ class CarResource extends Resource
                 Tables\Columns\TextColumn::make('mileage_in_km'),
                 Tables\Columns\TextColumn::make('technical_inspection_date')
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('price')->label('Price'),
+                Tables\Columns\TextColumn::make('price')
+                    ->sortable()
+                    ->label('Price'),
                 Tables\Columns\TextColumn::make('upload_date')
+                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
@@ -155,6 +162,71 @@ class CarResource extends Resource
         return [
             //
         ];
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist->schema([
+            Section::make()
+                ->columns(3)
+                ->schema([
+                    Group::make()
+                        ->columns(2)
+                        ->columnSpanFull()
+                        ->schema([
+                            TextEntry::make('mark')
+                                ->icon('heroicon-o-information-circle'),
+                            TextEntry::make('model')
+                                ->icon('heroicon-o-information-circle'),
+                            TextEntry::make('color')
+                                ->icon('heroicon-o-information-circle'),
+                            TextEntry::make('year')
+                                ->icon('heroicon-o-information-circle'),
+                            TextEntry::make('fuel_type')
+                                ->icon('heroicon-o-information-circle'),
+                            TextEntry::make('motor')
+                                ->icon('heroicon-o-information-circle'),
+                            TextEntry::make('body_type')
+                                ->icon('heroicon-o-information-circle'),
+                            TextEntry::make('gearbox')
+                                ->icon('heroicon-o-information-circle'),
+                            TextEntry::make('body_type')
+                                ->icon('heroicon-o-information-circle'),
+                            TextEntry::make('mileage_in_km')
+                                ->icon('heroicon-o-information-circle'),
+                        ]),
+                ]),
+            Section::make()
+                ->columns(4)
+                ->schema([
+                    Group::make()
+                        ->columns(2)
+                        ->columnSpanFull()
+                        ->schema([
+                            TextEntry::make('technical_inspection_date')
+                                ->icon('heroicon-o-calendar'),
+                            TextEntry::make('price')
+                                ->icon('heroicon-o-currency-euro'),
+                            TextEntry::make('upload_date')
+                                ->icon('heroicon-o-calendar'),
+                            TextEntry::make('reference_url')
+                                ->icon('heroicon-o-link')
+                                ->copyable(),
+                        ]),
+                ]),
+            Section::make('Images')
+                ->columns(4)
+                ->schema([
+                    Group::make()
+                        ->columns(2)
+                        ->columnSpanFull()
+                        ->schema([
+                            ImageEntry::make('images')
+                                ->label('')
+                                ->defaultImageUrl('https://via.placeholder.com/400'),
+                        ]),
+                ])
+        ]);
     }
 
     public static function canCreate(): bool
