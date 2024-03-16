@@ -79,22 +79,23 @@ class CarSpider extends BasicSpider
         [, $filteredMatches] = $matches;
         $specifications = $filteredMatches;
 
-        Car::create([
-            'reference_url' => $response->getUri(),
-            'mark' => $mark,
-            'model' => $model,
-            'year' => $year,
-            'motor' => $motor,
-            'fuel_type' => $fuelType,
-            'gearbox' => $gearBox,
-            'color' => $color,
-            'body_type' => $bodyType,
-            'mileage_in_km' => $mileageInKm,
-            'technical_inspection_date' => $technicalInspectionDate,
-            'price' => $price,
-            'upload_date' => Carbon::make($uploadDate)->toDateTimeString(),
-            'specifications' => json_encode($specifications),
-        ]);
+        Car::firstOrCreate(
+            ['reference_url' => $response->getUri()],
+            [
+                'mark' => $mark,
+                'model' => $model,
+                'year' => $year,
+                'motor' => $motor,
+                'fuel_type' => $fuelType,
+                'gearbox' => $gearBox,
+                'color' => $color,
+                'body_type' => $bodyType,
+                'mileage_in_km' => $mileageInKm,
+                'technical_inspection_date' => $technicalInspectionDate,
+                'price' => $price,
+                'upload_date' => Carbon::make($uploadDate)->toDateTimeString(),
+                'specifications' => json_encode($specifications),
+            ]);
 
         yield $this->item([]);
     }
@@ -171,5 +172,4 @@ class CarSpider extends BasicSpider
             );
         }
     }
-
 }
