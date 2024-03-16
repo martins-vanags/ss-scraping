@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string('technical_inspection_date');
             $table->integer('price');
             $table->dateTime('upload_date');
+            $table->json('images')->nullable();
             $table->json('specifications')->nullable();
             $table->timestamps();
         });

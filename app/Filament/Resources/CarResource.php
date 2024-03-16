@@ -166,6 +166,16 @@ class CarResource extends Resource
 
     public static function infolist(Infolist $infolist): Infolist
     {
+        $images = [];
+
+        foreach($infolist->record->images as $image) {
+            $images[] = ImageEntry::make('car_images')
+                ->label('')
+                ->url(url($image))
+                ->openUrlInNewTab()
+                ->defaultImageUrl(url($image));
+        }
+
         return $infolist->schema([
             Section::make()
                 ->columns(3)
@@ -215,16 +225,12 @@ class CarResource extends Resource
                         ]),
                 ]),
             Section::make('Images')
-                ->columns(4)
+                ->columns(2)
                 ->schema([
                     Group::make()
-                        ->columns(2)
+                        ->columns(4)
                         ->columnSpanFull()
-                        ->schema([
-                            ImageEntry::make('images')
-                                ->label('')
-                                ->defaultImageUrl('https://via.placeholder.com/400'),
-                        ]),
+                        ->schema($images),
                 ])
         ]);
     }

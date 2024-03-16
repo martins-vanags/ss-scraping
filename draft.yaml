@@ -13,6 +13,7 @@ models:
     technical_inspection_date: string
     price: integer
     upload_date: datetime
+    images: json nullable
     specifications: json nullable
 
 

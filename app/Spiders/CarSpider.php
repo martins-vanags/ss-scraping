@@ -4,6 +4,7 @@ namespace App\Spiders;
 
 use App\Models\Car;
 use Carbon\Carbon;
+use DOMDocument;
 use Generator;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
@@ -79,6 +80,18 @@ class CarSpider extends BasicSpider
         [, $filteredMatches] = $matches;
         $specifications = $filteredMatches;
 
+        $imageDivHtml = $response->filter('.ads_photo_label > div')->html();
+
+        $dom = new DOMDocument();
+        $dom->loadHTML($imageDivHtml);
+
+        $carImages = [];
+        $anchors = $dom->getElementsByTagName('a');
+        foreach ($anchors as $anchor) {
+            $href = $anchor->getAttribute('href');
+            $carImages[] = $href;
+        }
+
         Car::firstOrCreate(
             ['reference_url' => $response->getUri()],
             [
@@ -95,6 +108,7 @@ class CarSpider extends BasicSpider
                 'price' => $price,
                 'upload_date' => Carbon::make($uploadDate)->toDateTimeString(),
                 'specifications' => json_encode($specifications),
+                'images' => json_encode($carImages),
             ]);
 
         yield $this->item([]);

@@ -34,6 +34,7 @@ class CarFactory extends Factory
             'technical_inspection_date' => $this->faker->word(),
             'price' => $this->faker->numberBetween(-10000, 10000),
             'upload_date' => $this->faker->dateTime(),
+            'images' => '{}',
             'specifications' => '{}',
         ];
     }

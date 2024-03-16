@@ -14,4 +14,11 @@ final class Car extends Model
             get: fn($value) => json_decode($value, true),
         );
     }
+
+    protected function images(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value) => json_decode($value, true),
+        );
+    }
 }
