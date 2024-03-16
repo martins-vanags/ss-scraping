@@ -11,6 +11,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\QueryBuilder;
+use Filament\Tables\Filters\QueryBuilder\Constraints\DateConstraint;
 use Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint;
 use Filament\Tables\Filters\QueryBuilder\Constraints\SelectConstraint;
 use Filament\Tables\Table;
@@ -89,36 +90,43 @@ class CarResource extends Resource
                             ->icon('heroicon-o-currency-euro'),
                         SelectConstraint::make('mark')
                             ->multiple()
+                            ->icon('heroicon-o-wrench')
                             ->options(
                                 Car::distinct()->pluck('mark')->mapWithKeys(fn($item) => [$item => $item])->toArray(),
                             ),
                         SelectConstraint::make('model')
                             ->multiple()
+                            ->icon('heroicon-o-wrench')
                             ->options(
                                 Car::distinct()->pluck('model')->mapWithKeys(fn($item) => [$item => $item])->toArray(),
                             ),
                         SelectConstraint::make('year')
                             ->multiple()
+                            ->icon('heroicon-o-calendar')
                             ->options(
                                 Car::distinct()->pluck('year')->mapWithKeys(fn($item) => [$item => $item])->toArray(),
                             ),
                         SelectConstraint::make('motor')
                             ->multiple()
+                            ->icon('heroicon-o-wrench')
                             ->options(
                                 Car::distinct()->pluck('motor')->mapWithKeys(fn($item) => [$item => $item])->toArray(),
                             ),
                         SelectConstraint::make('fuel_type')
                             ->multiple()
+                            ->icon('heroicon-o-wrench')
                             ->options(
                                 Car::distinct()->pluck('fuel_type')->mapWithKeys(fn($item) => [$item => $item])->toArray(),
                             ),
                         SelectConstraint::make('gearbox')
                             ->multiple()
+                            ->icon('heroicon-o-wrench')
                             ->options(
                                 Car::distinct()->pluck('gearbox')->mapWithKeys(fn($item) => [$item => $item])->toArray(),
                             ),
                         SelectConstraint::make('color')
                             ->multiple()
+                            ->icon('heroicon-o-paint-brush')
                             ->options(
                                 Car::distinct()->pluck('color')->mapWithKeys(fn($item) => [$item => $item])->toArray(),
                             ),
@@ -127,6 +135,9 @@ class CarResource extends Resource
                             ->options(
                                 Car::distinct()->pluck('body_type')->mapWithKeys(fn($item) => [$item => $item])->toArray(),
                             ),
+                        DateConstraint::make('upload_date')
+                            ->label('Uploaded at')
+                            ->icon('heroicon-o-calendar'),
                     ])
                     ->constraintPickerColumns(2),
             ], layout: Tables\Enums\FiltersLayout::AboveContentCollapsible)
