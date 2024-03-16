@@ -168,12 +168,19 @@ class CarResource extends Resource
     {
         $images = [];
 
-        foreach($infolist->record->images as $image) {
+        foreach ($infolist->record->images as $image) {
             $images[] = ImageEntry::make('car_images')
                 ->label('')
                 ->url(url($image))
                 ->openUrlInNewTab()
                 ->defaultImageUrl(url($image));
+        }
+
+        $specifications = [];
+        foreach ($infolist->record->specifications as $specification) {
+            $specifications[] = TextEntry::make($specification)
+                ->color('primary')
+                ->icon('heroicon-o-information-circle');
         }
 
         return $infolist->schema([
@@ -223,6 +230,14 @@ class CarResource extends Resource
                                 ->icon('heroicon-o-link')
                                 ->copyable(),
                         ]),
+                ]),
+            Section::make('Additional features')
+                ->columns(2)
+                ->schema([
+                    Group::make()
+                        ->columns(4)
+                        ->columnSpanFull()
+                        ->schema($specifications),
                 ]),
             Section::make('Images')
                 ->columns(2)
