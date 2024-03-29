@@ -33,6 +33,8 @@ class CarFactory extends Factory
             'mileage_in_km' => $this->faker->word(),
             'technical_inspection_date' => $this->faker->word(),
             'price' => $this->faker->numberBetween(-10000, 10000),
+            'vin_code' => $this->faker->word(),
+            'vin_hash' => $this->faker->word(),
             'upload_date' => $this->faker->dateTime(),
             'images' => '{}',
             'specifications' => '{}',

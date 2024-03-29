@@ -12,7 +12,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command('app:fetch-cars')->everySixHours();
+        $schedule->command('app:fetch-cars')->hourly();
+        $schedule->command('app:vin-codes')->everyTwoMinutes();
     }
 
     /**

@@ -12,6 +12,8 @@ models:
     mileage_in_km: string
     technical_inspection_date: string
     price: integer
+    vin_code: string nullable
+    vin_hash: string nullable
     upload_date: datetime
     images: json nullable
     specifications: json nullable

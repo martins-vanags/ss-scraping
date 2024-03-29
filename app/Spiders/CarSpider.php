@@ -6,6 +6,8 @@ use App\Models\Car;
 use Carbon\Carbon;
 use DOMDocument;
 use Generator;
+use Illuminate\Http\Client\RequestException;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 use RoachPHP\Http\Request;
@@ -14,8 +16,19 @@ use RoachPHP\Spider\BasicSpider;
 
 class CarSpider extends BasicSpider
 {
+    /**
+     * @throws RequestException
+     */
     public function parse(Response $response): Generator
     {
+        $vinCodeUrl = $response->filter('a[href^="javascript:"][onclick*="_show_js_special_data"][title="Parādīt vin kodu"].a9a')->extract(['onclick']);
+
+        $hash = null;
+        if (isset($vinCodeUrl[0])) {
+            preg_match('/_show_js_special_data\((.*?)\)/', $vinCodeUrl[0], $vinCodeHash);
+            $hash = Str::of($vinCodeHash[1])->trim()->before(',')->remove("'")->toString();
+        }
+
         $uploadDate = $response->filter("#page_main table tr:contains('Izdrukāt') td[align]")->text();
         $uploadDate = Str::of($uploadDate)->after('Datums: ')->toString();
 
@@ -66,7 +79,11 @@ class CarSpider extends BasicSpider
 
         $technicalInspectionDate = $response->filter("td#tdo_223")->text();
 
-        $price = $response->filter("span.ads_price")->text();
+        try {
+            $price = $response->filter("span.ads_price")->text();
+        } catch (InvalidArgumentException $e) {
+            $price = 0;
+        }
 
         $price = Str::of($price)->remove('€')->remove(' ')->toInteger();
 
@@ -108,6 +125,7 @@ class CarSpider extends BasicSpider
                 'price' => $price,
                 'upload_date' => Carbon::make($uploadDate)->toDateTimeString(),
                 'specifications' => json_encode($specifications),
+                'vin_hash' => $hash,
                 'images' => json_encode($carImages),
             ]);
 

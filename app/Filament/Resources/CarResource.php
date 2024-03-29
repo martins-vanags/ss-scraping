@@ -92,6 +92,12 @@ class CarResource extends Resource
             ->filters([
                 QueryBuilder::make()
                     ->constraints([
+                        SelectConstraint::make('vin_code')
+                            ->multiple()
+                            ->icon('heroicon-o-wrench')
+                            ->options(
+                                Car::whereNotNull('vin_code')->pluck('vin_code', 'vin_code'),
+                            ),
                         NumberConstraint::make('price')
                             ->label('Price')
                             ->icon('heroicon-o-currency-euro'),
@@ -207,7 +213,7 @@ class CarResource extends Resource
                                 ->icon('heroicon-o-information-circle'),
                             TextEntry::make('gearbox')
                                 ->icon('heroicon-o-information-circle'),
-                            TextEntry::make('body_type')
+                            TextEntry::make('vin_code')
                                 ->icon('heroicon-o-information-circle'),
                             TextEntry::make('mileage_in_km')
                                 ->icon('heroicon-o-information-circle'),
