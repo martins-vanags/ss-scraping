@@ -44,22 +44,15 @@ class GetVinCodesForCarsSynced extends Command
                         'data' => $car->vin_hash,
                     ]);
 
-                Log::info($vinCode->body());
-
                 $code = null;
                 if ($vinCode->successful()) {
                     preg_match('/(?<=1678":")[^"]+/', $vinCode->body(), $matches);
                     $code = $matches[0] ?? null;
                 }
 
-                Log::info($code);
-
-                $updated = $car->update([
+                $car->update([
                     'vin_code' => $code,
                 ]);
-
-                Log::info($updated ? 'Updated car:' . $car->id : 'Not updated');
-
             });
     }
 }
