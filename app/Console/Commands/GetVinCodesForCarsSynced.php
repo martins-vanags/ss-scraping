@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Car;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class GetVinCodesForCarsSynced extends Command
 {
@@ -41,6 +42,8 @@ class GetVinCodesForCarsSynced extends Command
                         'lg' => 'lv',
                         'data' => $car->vin_hash,
                     ]);
+
+                Log::info($vinCode->body());
 
                 $code = null;
                 if ($vinCode->successful()) {
