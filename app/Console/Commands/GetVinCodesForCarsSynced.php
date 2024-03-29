@@ -51,9 +51,14 @@ class GetVinCodesForCarsSynced extends Command
                     $code = $matches[0] ?? null;
                 }
 
-                $car->update([
+                Log::info($code);
+
+                $updated = $car->update([
                     'vin_code' => $code,
                 ]);
+
+                Log::info($updated ? 'Updated car:' . $car->id : 'Not updated');
+
             });
     }
 }
