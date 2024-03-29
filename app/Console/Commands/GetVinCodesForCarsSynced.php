@@ -29,6 +29,7 @@ class GetVinCodesForCarsSynced extends Command
     public function handle(): void
     {
         Car::whereNotNull('vin_hash')
+            ->whereNull('vin_code')
             ->limit(5)
             ->get()
             ->map(function (Car $car) {
